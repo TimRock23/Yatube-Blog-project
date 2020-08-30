@@ -22,6 +22,8 @@ class Post(models.Model):
                               blank=True, null=True, related_name='posts',
                               verbose_name='Группа')
     image = models.ImageField(upload_to='posts/', blank=True, null=True)
+    like_num = models.IntegerField(default=0, verbose_name='Лайки')
+    like_done = models.ManyToManyField(User, related_name='liked')
 
     class Meta:
         ordering = ('-pub_date',)
@@ -35,7 +37,7 @@ class Comment(models.Model):
                              related_name='comments')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='comments')
-    text = models.TextField('Текст комментария')
+    text = models.TextField('Текст комментария', max_length=1000)
     created = models.DateTimeField('Время публикации', auto_now_add=True)
 
     class Meta:
@@ -50,3 +52,7 @@ class Follow(models.Model):
                              related_name='follower')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
                                related_name='following')
+
+    class Meta:
+        unique_together = ['user', 'author']
+

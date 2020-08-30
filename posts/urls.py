@@ -20,6 +20,11 @@ urlpatterns = [
         name='add_comment'
         ),
     path(
+        '<username>/<int:post_id>/like',
+        views.add_like,
+        name='add_like'
+    ),
+    path(
          '<str:username>/follow/',
          views.profile_follow,
          name='profile_follow'

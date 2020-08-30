@@ -40,6 +40,25 @@
                         Редактировать
                 </a>
                 {% endif %}
+
+                <a class="btn btn-sm text-muted" href="{% url 'add_like' post.author.username post.id %}" role="button">
+                    {% if user.is_authenticated and user != post.author %}
+                        {% if post not in user.liked %}
+                            <img src="https://image.flaticon.com/icons/svg/1077/1077035.svg" width="16" height="16" alt="Репутация:">
+                        {% else %}
+                            <img src="https://image.flaticon.com/icons/svg/1076/1076984.svg" width="16" height="16" alt="Репутация:">
+                        {% endif %}
+                        {{ post.like_num }}
+                    {% endif %}
+                </a>
+
+                <div class="btn btn-sm text-muted">
+                    {% if user == post.author %}
+                        <img src="https://image.flaticon.com/icons/svg/1076/1076984.svg" width="16" height="16" alt="Репутация:">
+                        {{ post.like_num }}
+                    {% endif %}
+                </div>
+
             </div>
 
             <!-- Дата публикации поста -->

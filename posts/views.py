@@ -53,12 +53,16 @@ def profile(request, username):
     length = len(post_list)
     following = Follow.objects.filter(
         user__username=request.user, author__username=username).exists()
+    follower = Follow.objects.filter(author=author).count()
+    followed = Follow.objects.filter(user=author).count()
     context = {
         'author': author,
         'page': page,
         'length': length,
         'paginator': paginator,
         'following': following,
+        'follower': follower,
+        'followed': followed,
     }
     return render(request, 'profile.html', context)
 
@@ -70,9 +74,13 @@ def post_view(request, username, post_id):
     comments = post.comments.all()
     form = CommentForm()
     user = request.user
+    author = get_object_or_404(User, username=username)
+    follower = Follow.objects.filter(author=author).count()
+    followed = Follow.objects.filter(user=author).count()
     context = {'author': post.author, 'post': post,
                'length': length, 'items': comments,
                'form': form, 'user': user,
+               'follower': follower, 'followed': followed,
                }
     return render(request, 'post.html', context)
 
@@ -97,8 +105,6 @@ def post_edit(request, username, post_id):
 
 
 def page_not_found(request, exception):
-    # Переменная exception содержит отладочную информацию,
-    # выводить её в шаблон пользователской страницы 404 мы не станем
     return render(
         request,
         "misc/404.html",
@@ -151,16 +157,32 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     following = get_object_or_404(User, username=username)
-    if following != request.user and not Follow.objects.filter(
-            user=request.user, author=following
-            ).exists():
-        Follow.objects.create(user=request.user, author=following)
+    if request.user != following:
+        Follow.objects.get_or_create(user=request.user, author=following)
     return redirect('profile', username=username)
 
 
 @login_required
 def profile_unfollow(request, username):
     following = get_object_or_404(User, username=username)
-    if Follow.objects.filter(user=request.user, author=following).exists():
-        Follow.objects.filter(user=request.user, author=following).delete()
+    Follow.objects.filter(user=request.user, author=following).delete()
     return redirect('profile', username=username)
+
+
+@login_required
+def add_like(request, username, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+    liked = post.like_done.all()
+    print(type(liked))
+    if user != post.author and user not in liked:
+        post.like_num += 1
+        post.like_done.add(user)
+        post.save()
+    elif user in liked:
+        post.like_num -= 1
+        post.like_done.remove(user)
+        post.save()
+    else:
+        return redirect('signup')
+    return redirect('post_id', username=username, post_id=post_id)
