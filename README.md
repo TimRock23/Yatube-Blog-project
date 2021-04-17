@@ -7,14 +7,19 @@
 
 ## Запуск проекта (Локальный)
 1. Создание виртуального окружения и подключение к нему.
+
 `python3 -m venv venv`
+
 `source venv/bin/activate`
 
 2. Установка зависимостей
+
 `pip install -r requirements.txt`
 
 3. Развёртывание проекта
+
 `python3 manage.py runserver`
+
 ***
 
 ## **Технологии**
