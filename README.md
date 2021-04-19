@@ -12,11 +12,21 @@
 
 `source venv/bin/activate`
 
-2. Установка зависимостей
+2. Настройка перменных окружения. 
+Создайте файл `.env` и добавьте в него следующие переменные:
+
+`DB_ENGINE # база данных, например, postgresql (django.db.backends.postgresql)`
+`DB_NAME # имя базы данных`
+`POSTGRES_USER # логин для подключения к базе данных`
+`POSTGRES_PASSWORD # пароль для подключения к БД`
+`DB_HOST # название сервиса (контейнера)`
+`DB_PORT # порт для подключения к БД`
+
+3. Установка зависимостей
 
 `pip install -r requirements.txt`
 
-3. Развёртывание проекта
+4. Развёртывание проекта
 
 `python3 manage.py runserver`
 
